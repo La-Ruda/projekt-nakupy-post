@@ -47,7 +47,7 @@ export const ShopList = (props) => {
     return element;
   }
 
-  const handleAdd = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
   
     const productInput = element.querySelector('.product-input');
@@ -72,7 +72,7 @@ export const ShopList = (props) => {
       });
   };
 
-  element.querySelector('.btn-add').addEventListener('click', handleAdd);
+  element.querySelector('.shoplist__new').addEventListener('submit', handleSubmit);
 
   const itemsElement = element.querySelector('.shoplist__items');
   itemsElement.append(...dayResult.items.map((item) => ListItem(item)));
