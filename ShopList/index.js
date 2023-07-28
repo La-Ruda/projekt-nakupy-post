@@ -1,6 +1,7 @@
 import { ListItem } from '../ListItem/index.js';
 
 export const ShopList = (props) => {
+  
   const { day, dayResult } = props;
 
   let dayName = 'Načítám...';
@@ -11,8 +12,12 @@ export const ShopList = (props) => {
   const element = document.createElement('div');
   element.classList.add('shoplist');
   element.innerHTML = `
-    <div class="shoplist__head">
-      <h2 class="shoplist__day">${dayName}</h2>
+  <div class="shoplist__head">
+    <h2 class="shoplist__day">${dayName}</h2>
+      <div class="shoplist__toolbar">
+        <button class="reset-btn">obnovit</button>
+        <button class="clear-btn">vymazat</button>
+      </div>
     </div>
     <form class="shoplist__new">
       <div class="form-fields">  
@@ -47,6 +52,7 @@ export const ShopList = (props) => {
     return element;
   }
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
   
@@ -72,6 +78,54 @@ export const ShopList = (props) => {
       });
   };
 
+  const handleReset = () => {
+
+    fetch(`https://nakupy.kodim.app/api/me/week/${day}/actions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        "type": "reset",
+      })
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      element.replaceWith(ShopList({ day, dayResult: data.result}));
+    });
+  };
+
+
+  const resetButton = element.querySelector(".reset-btn");
+
+  resetButton.addEventListener("click", handleReset);
+
+
+  const handleClear = () => {
+
+    fetch(`https://nakupy.kodim.app/api/me/week/${day}/actions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        "type": "clear",
+      })
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      element.replaceWith(ShopList({ day, dayResult: data.result}))
+    })
+  }
+
+  const clearButton = element.querySelector(".clear-btn");
+
+  clearButton.addEventListener("click", handleClear);
+
+
+
   element.querySelector('.shoplist__new').addEventListener('submit', handleSubmit);
 
   const itemsElement = element.querySelector('.shoplist__items');
@@ -79,3 +133,5 @@ export const ShopList = (props) => {
 
   return element;
 };
+
+
